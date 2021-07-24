@@ -16,6 +16,8 @@ RUN echo -e "prefix=${HOME}/.npm-packages\nloglevel=verbose" > ${HOME}/.npmrc
 RUN pip3 install --user pynvim
 RUN npm install --global yarn
 
-RUN mkdir --parents /home/user/.config/nvim
+RUN mkdir --parents "home/user/.config/nvim"
+RUN mkdir --parents "/home/user/.local/share/nvim/"
+
 WORKDIR /home/user/.config/nvim
-ENTRYPOINT ["nvim"]
+ENTRYPOINT ["nvim", "init.vim"]

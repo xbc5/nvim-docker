@@ -1,6 +1,7 @@
 #!/bin/bash
 
 [[ -z "$1" ]] && { echo "You must provide a working directory"; exit 1; }
+[[ "$1" == "data" ]] && { echo "Not the data dir"; exit 1; }
 
 
 proj="$(dirname `realpath $0`)"
@@ -12,11 +13,23 @@ if ! [[ -d "$workdir" ]]; then
   for d in local config; do
     mkdir --parents "${workdir}/$d"
   done
-  touch "${workdir}/${d}/init.vim"
+
+  cp "${proj}/init.vim" "${workdir}/config/"
+
+  # cloning for every working dir is not ideal, but because docker likes
+  #  to take ownership of a volume's full path (i.e. chowns root:root) then
+  #  none of the parents are writable. This at least keeps the full path owned
+  #  by user, and additionally iosolates packer between configurations. One drawback
+  #  is that you may be running different packer versions between different configs,
+  #  so be aware of that.
+  start="${workdir}/local/site/pack/packer/start"
+  mkdir --parents "$start"
+  git clone https://github.com/wbthomason/packer.nvim "${start}/packer.nvim"
 fi
 
 
 docker run \
+  --user user:user \
   --rm \
   -it \
   --network host \
