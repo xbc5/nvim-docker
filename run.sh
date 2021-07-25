@@ -10,9 +10,8 @@ workdir="${proj}/$1"
 
 if ! [[ -d "$workdir" ]]; then
   # see :h stdpath() for a complete list
-  for d in local config; do
-    mkdir --parents "${workdir}/$d"
-  done
+  mkdir --parents "${workdir}/local"
+  mkdir --parents "${workdir}/config"
 
   cp "${proj}/init.vim" "${workdir}/config/"
 
